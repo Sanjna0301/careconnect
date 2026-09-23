@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+/* ============================================================
+   CareConnect — "Calm Depth" design system
+   Depth communicates hierarchy. It is never decoration.
+   Emergency surfaces stay flat, instant and maximally legible.
+   ============================================================ */
+
+@theme {
+  /* --- Primary: Medical Blue --- */
+  --color-med-50:  #eff6ff;
+  --color-med-100: #dbeafe;
+  --color-med-200: #bfdbfe;
+  --color-med-300: #93c5fd;
+  --color-med-400: #60a5fa;
+  --color-med-500: #2f80ed;
+  --color-med-600: #1266d6;
+  --color-med-700: #0b51ad;
+  --color-med-800: #0c4289;
+  --color-med-900: #0e3a72;
+  --color-med-950: #082449;
+
+  /* --- Secondary: Light Blue / Gray (surfaces) --- */
+  --color-mist-50:  #f8fafc;
+  --color-mist-100: #f1f5f9;
+  --color-mist-200: #e6edf5;
+  --color-mist-300: #d3dfec;
+  --color-mist-400: #b3c4d6;
+
+  /* --- Ink: high-contrast text --- */
+  --color-ink-900: #0a1628;
+  --color-ink-700: #24384f;
+  --color-ink-500: #4b6076;
+  --color-ink-400: #6b7f95;
+
+  /* --- Alert Red: emergency actions only --- */
+  --color-alert-50:  #fef2f2;
+  --color-alert-100: #fee2e2;
+  --color-alert-200: #fecaca;
+  --color-alert-500: #ef4444;
+  --color-alert-600: #d92d20;
+  --color-alert-700: #b42318;
+  --color-alert-800: #912018;
+
+  /* --- Support: success / warning (status only, never decoration) --- */
+  --color-good-50:  #ecfdf5;
+  --color-good-100: #d1fae5;
+  --color-good-600: #059669;
+  --color-good-700: #047857;
+  --color-warn-50:  #fffbeb;
+  --color-warn-100: #fef3c7;
+  --color-warn-600: #d97706;
+  --color-warn-700: #b45309;
+
+  /* --- Breakpoints: xs covers small phones (iPhone SE and below) --- */
+  --breakpoint-xs: 26rem;
+
+  /* --- Typography --- */
+  --font-sans: "Inter var", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* --- Radii --- */
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+
+  /* --- Elevation: a single light source, top-centre, 1 unit away.
+         Each step doubles perceived distance from the page. --- */
+  --shadow-e1: 0 1px 2px -1px rgb(10 22 40 / 0.10), 0 1px 3px rgb(10 22 40 / 0.06);
+  --shadow-e2: 0 2px 4px -2px rgb(10 22 40 / 0.10), 0 4px 10px -2px rgb(10 22 40 / 0.08);
+  --shadow-e3: 0 4px 8px -4px rgb(10 22 40 / 0.12), 0 12px 24px -6px rgb(10 22 40 / 0.10);
+  --shadow-e4: 0 8px 16px -8px rgb(10 22 40 / 0.16), 0 24px 48px -12px rgb(10 22 40 / 0.14);
+  --shadow-alert: 0 4px 10px -3px rgb(180 35 24 / 0.35), 0 12px 28px -8px rgb(180 35 24 / 0.30);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+
+@layer base {
+  :root {
+    /* 17px base: legible for elderly and stressed users without zoom */
+    font-size: 17px;
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
+
+  @media (min-width: 768px) {
+    :root { font-size: 16px; }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-mist-100);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    /* Room for the fixed bottom navigation on mobile */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Visible, high-contrast focus for keyboard and switch users. */
+  :focus-visible {
+    outline: 3px solid var(--color-med-600);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Never remove focus on emergency controls, even on dark red. */
+  .focus-on-red:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--color-ink-900);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  p { text-wrap: pretty; }
+
+  button, a { -webkit-tap-highlight-color: transparent; }
+
+  /* Minimum tap target: 48x48 CSS px (WCAG 2.2 AAA / Android guideline) */
+  button, [role="button"], a[data-tap] {
+    min-height: 48px;
+  }
+
+  ::selection {
+    background: var(--color-med-200);
+    color: var(--color-ink-900);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Utilities                                                           */
+/* ------------------------------------------------------------------ */
+
+@utility e1 { box-shadow: var(--shadow-e1); }
+@utility e2 { box-shadow: var(--shadow-e2); }
+@utility e3 { box-shadow: var(--shadow-e3); }
+@utility e4 { box-shadow: var(--shadow-e4); }
+
+/* Screen-reader-only text that still receives focus when tabbed to. */
+@utility sr-only-focusable {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@layer components {
+  /* --- 3D surface: a card that sits in real space -------------------
+     A 1px top highlight reads as the lit edge; the shadow is the
+     cast shadow from the same light. Together they give thickness
+     without a single gradient wash. */
+  .surface {
+    background: #fff;
+    border-radius: var(--radius-card);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 0 0 1px rgb(10 22 40 / 0.06),
+      var(--shadow-e2);
+  }
+
+  .surface-raised {
+    background: #fff;
+    border-radius: var(--radius-card);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      0 0 0 1px rgb(10 22 40 / 0.06),
+      var(--shadow-e3);
+  }
+
+  /* --- Interactive lift: pointer devices only -----------------------
+     Touch users get no hover state, so we spend nothing on them. */
+  .lift {
+    transition:
+      transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .lift:hover {
+      transform: translateY(-3px);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.9),
+        0 0 0 1px rgb(10 22 40 / 0.06),
+        var(--shadow-e4);
+    }
+  }
+
+  .lift:active { transform: translateY(0); }
+
+  /* --- Tilt stage: perspective container for parallax cards --------- */
+  .stage { perspective: 1200px; perspective-origin: 50% 40%; }
+  .tilt  { transform-style: preserve-3d; transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  /* --- Emergency pulse: a slow breath, not a flash.
+     Fast blinking is a seizure risk and reads as panic. */
+  .sos-halo::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    background: var(--color-alert-600);
+    opacity: 0.28;
+    z-index: -1;
+    animation: sos-breathe 2600ms ease-in-out infinite;
+  }
+
+  @keyframes sos-breathe {
+    0%, 100% { transform: scale(1);    opacity: 0.28; }
+    50%      { transform: scale(1.06); opacity: 0.12; }
+  }
+
+  /* --- Glass header: legible over scrolling content ----------------- */
+  .glass {
+    background: rgb(255 255 255 / 0.82);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass { background: #fff; }
+  }
+
+  /* --- Skeleton shimmer for slow networks --------------------------- */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-mist-200) 25%,
+      var(--color-mist-100) 37%,
+      var(--color-mist-200) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1400ms ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+  }
+
+  .fade-up { animation: fade-up 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion & contrast preferences — honoured everywhere, no exceptions  */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .lift:hover { transform: none; }
+}
+
+@media (prefers-contrast: more) {
+  .surface, .surface-raised {
+    box-shadow: 0 0 0 2px var(--color-ink-900);
+  }
+}
+
+@media print {
+  .no-print { display: none !important; }
+}

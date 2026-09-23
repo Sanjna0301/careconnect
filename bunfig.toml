@@ -1,0 +1,2 @@
+# Bun resolves the "@/..." alias from tsconfig paths for scripts run directly
+# (the smoke test); Vite handles it for the app build.
