@@ -188,7 +188,7 @@ network degrades with a message instead of a blank screen.
 | `bun run preview` | Serves the built app on `http://localhost:4173` |
 | `bun run preview:https` | Serves the built app over HTTPS — use this to test the PWA |
 | `bun run typecheck` | `tsc -b` across the app, node and test projects |
-| `bun test` | 41 unit tests — geo, cost maths, triage, report parser, wallet |
+| `bun test` | 107 tests — unit logic plus end-to-end UI flows driven through a real DOM |
 | `bun run smoke` | Server-renders all 14 routes, fails on any throw |
 | `bun run verify` | **typecheck → test → smoke → build.** Run this before you commit. |
 
@@ -197,9 +197,9 @@ bun run verify
 ```
 
 ```
-41 pass  0 fail
-All 14 routes rendered without error.
-✓ built in 823ms
+107 pass  0 fail
+All 17 routes rendered without error.
+✓ built in 842ms
 ```
 
 ---
@@ -281,6 +281,7 @@ service worker refuse to run on an insecure origin.
 | AI assistant — red-flag symptom triage | `/assistant` | Rule-based, works offline |
 | Lab report reader — 11 analytes against reference ranges | `/assistant` | Real parsing, text files |
 | Crowdfunding — verified documents and a disbursement trail | `/fundraisers` | Working, payments stubbed |
+| Start a campaign from a treatment cost you cannot afford | `/fundraisers/start` | Working — prefilled from the hospital search |
 | CareConnect Hero — rescue claims, hospital verification | `/hero` | Working, approval stubbed |
 | CareCoins wallet — ledger, expiry, 20% redemption cap | `/wallet` | Working, `localStorage` |
 | First aid — 8 guides, read-aloud, offline | `/first-aid` | Working |
@@ -331,7 +332,7 @@ careconnect/
     │                       helplines, city centres
     ├── store/              location + wallet contexts, CareCoins ledger
     ├── lib/                geo, format, triage, reportParser, speech, storage
-    └── __tests__/          41 unit tests
+    └── __tests__/          unit + DOM flow tests (107 assertions-heavy tests)
 ```
 
 ---

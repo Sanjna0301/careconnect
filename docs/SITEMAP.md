@@ -10,7 +10,10 @@ downloads the smallest possible amount before the SOS button works.
 │     ?t=<treatment-key>            …scoped to one condition (adds cost bands + national ranking)
 │     ?emergency=1                   …pre-filtered to 24×7 emergency departments
 ├── /assistant                    AI Health Assistant — symptom triage + report reader
-├── /fundraisers                  Campaign index (All / Urgent / Closing soon)
+├── /fundraisers                  Campaign index (All / Urgent / Closing soon / Mine)
+│   ├── /fundraisers/start        Create a campaign — 4-step wizard
+│   │     ?hospital=<id>&t=<key>    …prefilled from the hospital search, with that
+│   │                               hospital's own cost estimate as the goal anchor
 │   └── /fundraisers/:id          Campaign detail — story, documents, money trail, donate
 ├── /hero                         CareConnect Hero — submit a rescue, track claims
 ├── /wallet                       CareCoins wallet — balance, ledger, redemption, partners
@@ -41,11 +44,35 @@ Every primary task is reachable in **two taps or fewer** from a cold start:
 | Share your GPS with someone | 2 (SOS → Share location) |
 | CPR instructions | 2 (First Aid → CPR) |
 | Check CareCoins balance | 1 (bottom nav → Wallet) |
+| Start a fundraiser for a cost you just saw | 1 ("Can't afford this?" on the hospital card) |
 
 ## Deep links registered in the PWA manifest
 
 `/?sos=1` · `/hospitals?emergency=1` · `/first-aid` — long-pressing the
 installed app icon jumps straight to these.
+
+## The search → fundraiser handoff
+
+The flow the product is built around:
+
+```
+/hospitals?t=valve-replacement
+        │  user sees "₹4.8L – ₹12L at Shivalik PGMI"
+        │  and taps "Can't afford this? Start a fundraiser"
+        ▼
+/fundraisers/start?hospital=h-chd-01&t=valve-replacement
+        │  city, condition and a suggested goal are already filled in,
+        │  anchored to THAT hospital's quoted band
+        ▼
+4 steps → campaign created as `unverified`, donations CLOSED
+        ▼
+hospital billing office confirms the estimate
+        ▼
+/fundraisers/:id  — public, verified badge, donations open
+```
+
+The goal anchor is the anti-fraud mechanism: a request far above the treating
+hospital's own estimate is warned about, and hard-capped at 3×.
 
 ## Routes intentionally *not* built
 
