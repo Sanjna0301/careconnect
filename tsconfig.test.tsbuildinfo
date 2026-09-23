@@ -1,1 +1,1 @@
-{"root":["./src/__tests__/logic.test.ts","./scripts/smoke.tsx"],"version":"5.9.3"}
+{"root":["./src/__tests__/logic.test.ts","./scripts/ip.ts","./scripts/smoke.tsx"],"version":"5.9.3"}
