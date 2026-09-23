@@ -14,11 +14,7 @@ export function QuickActions() {
   const { coords, request } = useLocation()
 
   async function share() {
-    let point = coords
-    if (!point) {
-      await request()
-      point = coords
-    }
+    const point = coords ?? (await request())
     if (!point) {
       announce('Turn on location to share where you are.', 'error')
       return

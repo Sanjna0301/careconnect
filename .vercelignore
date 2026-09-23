@@ -1,0 +1,8 @@
+# Nothing here affects the built site, so keep it out of the upload.
+docs/
+scripts/smoke.tsx
+src/__tests__/
+Dockerfile
+.dockerignore
+docker/
+README.md

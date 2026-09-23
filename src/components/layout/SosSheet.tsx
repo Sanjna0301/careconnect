@@ -22,11 +22,7 @@ export function SosSheet({ open, onClose }: { open: boolean; onClose: () => void
   async function shareLocation() {
     setSharing(true)
     try {
-      let point = coords
-      if (!point) {
-        await request()
-        point = coords
-      }
+      const point = coords ?? (await request())
       if (!point) {
         announce('Could not get your location. Turn on GPS and try again.', 'error')
         return

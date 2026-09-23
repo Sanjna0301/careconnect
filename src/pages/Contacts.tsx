@@ -39,8 +39,7 @@ export function Contacts() {
   }
 
   async function alertAll() {
-    let point = coords
-    if (!point) { await request(); point = coords }
+    const point = coords ?? (await request())
     const text = point
       ? locationShareText(point)
       : 'I need help. I could not share my location — please call me.'

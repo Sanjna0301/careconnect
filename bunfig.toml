@@ -1,2 +1,6 @@
 # Bun resolves the "@/..." alias from tsconfig paths for scripts run directly
 # (the smoke test); Vite handles it for the app build.
+
+[test]
+# Registers happy-dom before any test imports React.
+preload = ["./src/__tests__/setup.ts"]

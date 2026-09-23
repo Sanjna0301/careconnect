@@ -206,52 +206,50 @@ All 14 routes rendered without error.
 
 ## Deploy it
 
-It is a static SPA — any static host works. The build output is `dist/`.
+Full guide: **[docs/DEPLOY.md](docs/DEPLOY.md)**
+
+### Vercel (recommended)
 
 ```bash
-bun run build
+bunx vercel --prod
 ```
 
-**One required setting:** the host must rewrite unknown paths to
-`/index.html`, or refreshing on `/wallet` will 404.
+Or import the repo at **vercel.com/new** and accept the detected settings —
+[`vercel.json`](vercel.json) supplies the build command, the SPA rewrite, cache
+headers and security headers.
 
-<details>
-<summary><strong>Vercel</strong></summary>
+**Commit the staged cleanup first.** This repo previously tracked
+`node_modules/` and `dist/`; they are now untracked but the change is not yet
+committed:
 
 ```bash
-bunx vercel deploy --prod
+git add -A
+git commit -m "Add deployment config; stop tracking build artifacts"
+git push origin main
 ```
 
-Build command `bun run build`, output directory `dist`. Rewrites are automatic.
-</details>
+### Docker (self-hosting only)
 
-<details>
-<summary><strong>Netlify</strong> — create <code>public/_redirects</code></summary>
+**Vercel does not use the Dockerfile** — it builds the repo directly. The image
+is for container hosts: Fly.io, Railway, Cloud Run, Kubernetes, a VPS.
 
+```bash
+docker build -t careconnect .
+docker run --rm -p 8080:80 careconnect     # → http://localhost:8080
 ```
-/*  /index.html  200
-```
-</details>
 
-<details>
-<summary><strong>Cloudflare Pages</strong></summary>
+Two stages: Bun builds, `nginx:alpine` serves. No Bun or Node at runtime,
+roughly 55 MB. TLS is expected to terminate in front of it.
 
-Build command `bun run build`, output directory `dist`, and set
-**Single-page application** in the build settings.
-</details>
+### Any other static host
 
-<details>
-<summary><strong>Nginx</strong></summary>
-
-```nginx
-location / {
-  try_files $uri $uri/ /index.html;
-}
-```
-</details>
+The output is plain static files in `dist/`. Whatever you use, it **must**
+rewrite unknown paths to `/index.html`, or refreshing on `/wallet` will 404.
+Netlify, Cloudflare Pages and Nginx recipes are in
+[docs/DEPLOY.md](docs/DEPLOY.md).
 
 HTTPS is **mandatory in production** — geolocation, the microphone and the
-service worker will not run over plain HTTP on a public domain.
+service worker refuse to run on an insecure origin.
 
 ---
 
@@ -298,6 +296,7 @@ Full detail on what production still needs is in
 - **[Site map](docs/SITEMAP.md)** — every route, global chrome, navigation depth
 - **[Technology stack](docs/TECH-STACK.md)** — what is built, what production still needs
 - **[Wireframes](docs/WIREFRAMES.md)** — homepage and wallet, mobile and desktop
+- **[Deployment](docs/DEPLOY.md)** — Vercel, Docker, other hosts, and what to check after shipping
 
 ---
 
@@ -307,6 +306,10 @@ Full detail on what production still needs is in
 careconnect/
 ├── index.html              app entry, fonts, noscript fallback with 112
 ├── vite.config.ts          build config, optional HTTPS, LAN host
+├── vercel.json             Vercel build, SPA rewrite, cache + security headers
+├── Dockerfile              self-hosting only — Vercel ignores this
+├── docker-compose.yml      convenience wrapper for the image
+├── docker/                 nginx config + shared security headers
 ├── public/
 │   ├── sw.js               service worker — offline shell
 │   ├── manifest.webmanifest PWA manifest with emergency shortcuts

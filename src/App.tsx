@@ -4,6 +4,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { AnnouncerProvider } from '@/components/ui/Announcer'
 import { LocationProvider } from '@/store/location'
 import { WalletProvider } from '@/store/walletContext'
+import { CampaignsProvider } from '@/store/campaignsContext'
 import { HospitalCardSkeleton } from '@/components/ui/Skeleton'
 import { Home } from '@/pages/Home'
 
@@ -15,6 +16,7 @@ import { Home } from '@/pages/Home'
 const Hospitals = lazy(() => import('@/pages/Hospitals').then((m) => ({ default: m.Hospitals })))
 const Assistant = lazy(() => import('@/pages/Assistant').then((m) => ({ default: m.Assistant })))
 const Fundraisers = lazy(() => import('@/pages/Fundraisers').then((m) => ({ default: m.Fundraisers })))
+const CampaignCreate = lazy(() => import('@/pages/CampaignCreate').then((m) => ({ default: m.CampaignCreate })))
 const FundraiserDetail = lazy(() => import('@/pages/FundraiserDetail').then((m) => ({ default: m.FundraiserDetail })))
 const HeroPortal = lazy(() => import('@/pages/HeroPortal').then((m) => ({ default: m.HeroPortal })))
 const WalletPage = lazy(() => import('@/pages/WalletPage').then((m) => ({ default: m.WalletPage })))
@@ -38,6 +40,7 @@ export function App() {
       <AnnouncerProvider>
         <LocationProvider>
           <WalletProvider>
+            <CampaignsProvider>
             <Routes>
               <Route element={<AppShell />}>
                 <Route index element={<Home />} />
@@ -52,6 +55,10 @@ export function App() {
                 <Route
                   path="fundraisers"
                   element={<Suspense fallback={<PageFallback />}><Fundraisers /></Suspense>}
+                />
+                <Route
+                  path="fundraisers/start"
+                  element={<Suspense fallback={<PageFallback />}><CampaignCreate /></Suspense>}
                 />
                 <Route
                   path="fundraisers/:id"
@@ -79,6 +86,7 @@ export function App() {
                 />
               </Route>
             </Routes>
+          </CampaignsProvider>
           </WalletProvider>
         </LocationProvider>
       </AnnouncerProvider>

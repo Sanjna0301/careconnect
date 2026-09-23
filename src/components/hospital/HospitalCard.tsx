@@ -1,6 +1,7 @@
 import { memo } from 'react'
+import { Link } from 'react-router-dom'
 import {
-  Ambulance, BedDouble, BadgeCheck, Droplets, Navigation, Phone,
+  Ambulance, BedDouble, BadgeCheck, Droplets, HandHeart, Navigation, Phone,
   ShieldCheck, Star, Wallet,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
@@ -130,6 +131,14 @@ export const HospitalCard = memo(function HospitalCard({
                   Estimated package range. Confirm with the hospital — final cost
                   depends on room class, implants and length of stay.
                 </p>
+                <Link
+                  to={`/fundraisers/start?hospital=${hospital.id}&t=${treatment.key}`}
+                  data-tap
+                  className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg bg-white px-3 text-[0.85rem] font-bold text-med-700 ring-1 ring-med-200 hover:ring-med-400"
+                >
+                  <HandHeart size={16} aria-hidden="true" />
+                  Can't afford this? Start a fundraiser
+                </Link>
               </>
             ) : (
               <p className="text-[0.88rem] font-medium text-ink-700">

@@ -225,11 +225,21 @@ export const CAMPAIGNS: Campaign[] = [
   },
 ]
 
-export const fundedPercent = (c: Campaign) =>
-  Math.min(100, Math.round((c.raised / c.goal) * 100))
+/** Bounded to 0–100. A zero or missing goal reads as 0%, never NaN — a NaN
+ *  here reaches the DOM as `aria-valuenow="NaN"` and a broken bar width. */
+export const fundedPercent = (c: Campaign) => {
+  if (!Number.isFinite(c.goal) || c.goal <= 0) return 0
+  if (!Number.isFinite(c.raised) || c.raised <= 0) return 0
+  return Math.max(0, Math.min(100, Math.round((c.raised / c.goal) * 100)))
+}
 
-export const daysLeft = (c: Campaign) =>
-  Math.max(0, Math.ceil((new Date(c.deadline).getTime() - Date.now()) / 86_400_000))
+/** Whole days remaining, floored at 0. An unparseable deadline reads as
+ *  expired rather than propagating NaN through the UI. */
+export const daysLeft = (c: Campaign) => {
+  const end = new Date(c.deadline).getTime()
+  if (!Number.isFinite(end)) return 0
+  return Math.max(0, Math.ceil((end - Date.now()) / 86_400_000))
+}
 
 export const totalDisbursed = (c: Campaign) =>
   c.disbursements.reduce((sum, d) => sum + d.amount, 0)

@@ -20,7 +20,12 @@ type LocationValue = {
   /** True when coords came from cache or a manually picked city. */
   approximate: boolean
   label: string | null
-  request: () => Promise<void>
+  /**
+   * Requests a fix and RETURNS it. Callers must use the returned value —
+   * reading `coords` straight after `await request()` gets the stale closure
+   * value, because React state does not update an existing closure.
+   */
+  request: () => Promise<Coords | null>
   setManual: (coords: Coords, label: string) => void
 }
 
@@ -50,7 +55,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const request = useCallback(async () => {
+  const request = useCallback(async (): Promise<Coords | null> => {
     setStatus('locating')
     try {
       const next = await getPosition()
@@ -59,9 +64,11 @@ export function LocationProvider({ children }: { children: ReactNode }) {
       setLabel(null)
       setStatus('granted')
       writeJSON(CACHE_KEY, { coords: next, label: null, at: Date.now() } satisfies Cached)
+      return next
     } catch (err) {
       const code = (err as GeolocationPositionError)?.code
       setStatus(code === 1 ? 'denied' : 'unavailable')
+      return null
     }
   }, [])
 

@@ -53,6 +53,7 @@ const React = (await import('react')).default
 const { AnnouncerProvider } = await import('../src/components/ui/Announcer')
 const { LocationProvider } = await import('../src/store/location')
 const { WalletProvider } = await import('../src/store/walletContext')
+const { CampaignsProvider } = await import('../src/store/campaignsContext')
 const { AppShell } = await import('../src/components/layout/AppShell')
 const { Routes, Route } = await import('react-router')
 
@@ -61,6 +62,7 @@ const { Hospitals } = await import('../src/pages/Hospitals')
 const { Assistant } = await import('../src/pages/Assistant')
 const { Fundraisers } = await import('../src/pages/Fundraisers')
 const { FundraiserDetail } = await import('../src/pages/FundraiserDetail')
+const { CampaignCreate } = await import('../src/pages/CampaignCreate')
 const { HeroPortal } = await import('../src/pages/HeroPortal')
 const { WalletPage } = await import('../src/pages/WalletPage')
 const { FirstAid } = await import('../src/pages/FirstAid')
@@ -74,6 +76,9 @@ const ROUTES = [
   '/hospitals?emergency=1',
   '/assistant',
   '/fundraisers',
+  '/fundraisers/start',
+  '/fundraisers/start?hospital=h-blr-01&t=bypass',
+  '/fundraisers/start?hospital=nope&t=nope',
   '/fundraisers/c-001',
   '/fundraisers/c-005',
   '/fundraisers/does-not-exist',
@@ -100,6 +105,9 @@ function tree(path: string) {
           WalletProvider as never,
           null,
           h(
+          CampaignsProvider as never,
+          null,
+          h(
             Routes as never,
             null,
             h(Route as never, { element: h(AppShell as never, null) }, [
@@ -107,6 +115,7 @@ function tree(path: string) {
               h(Route as never, { key: 'h', path: 'hospitals', element: h(Hospitals as never, null) }),
               h(Route as never, { key: 'a', path: 'assistant', element: h(Assistant as never, null) }),
               h(Route as never, { key: 'f', path: 'fundraisers', element: h(Fundraisers as never, null) }),
+              h(Route as never, { key: 'fs', path: 'fundraisers/start', element: h(CampaignCreate as never, null) }),
               h(Route as never, { key: 'fd', path: 'fundraisers/:id', element: h(FundraiserDetail as never, null) }),
               h(Route as never, { key: 'hp', path: 'hero', element: h(HeroPortal as never, null) }),
               h(Route as never, { key: 'w', path: 'wallet', element: h(WalletPage as never, null) }),
@@ -114,6 +123,7 @@ function tree(path: string) {
               h(Route as never, { key: 'c', path: 'contacts', element: h(Contacts as never, null) }),
               h(Route as never, { key: 'nf', path: '*', element: h(NotFound as never, null) }),
             ]),
+          ),
           ),
         ),
       ),

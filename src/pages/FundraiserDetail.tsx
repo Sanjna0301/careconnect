@@ -10,7 +10,9 @@ import { Badge } from '@/components/ui/Badge'
 import { Progress } from '@/components/ui/Progress'
 import { Sheet } from '@/components/ui/Sheet'
 import { useAnnounce } from '@/components/ui/Announcer'
-import { CAMPAIGNS, daysLeft, fundedPercent, totalDisbursed } from '@/data/campaigns'
+import { daysLeft, fundedPercent, totalDisbursed } from '@/data/campaigns'
+import { useCampaigns } from '@/store/campaignsContext'
+import { canAcceptDonations } from '@/lib/campaignDraft'
 import { HOSPITALS } from '@/data/hospitals'
 import { formatDate, formatINR, formatINRCompact } from '@/lib/format'
 import { cn } from '@/lib/cn'
@@ -19,7 +21,8 @@ const PRESETS = [500, 1000, 2500, 5000]
 
 export function FundraiserDetail() {
   const { id } = useParams()
-  const campaign = CAMPAIGNS.find((c) => c.id === id)
+  const { byId, isMine, markVerified } = useCampaigns()
+  const campaign = id ? byId(id) : undefined
   const [donateOpen, setDonateOpen] = useState(false)
   const [amount, setAmount] = useState(1000)
   const announce = useAnnounce()
@@ -41,6 +44,8 @@ export function FundraiserDetail() {
     )
   }
 
+  const mine = isMine(campaign.id)
+  const donatable = canAcceptDonations(campaign)
   const pct = fundedPercent(campaign)
   const days = daysLeft(campaign)
   const disbursed = totalDisbursed(campaign)
@@ -76,9 +81,12 @@ export function FundraiserDetail() {
               <Badge tone="good" icon={<ShieldCheck size={14} aria-hidden="true" />}>
                 Verified by {campaign.verifiedBy}
               </Badge>
-            ) : (
+            ) : campaign.status === 'pending' ? (
               <Badge tone="warn">Verification in progress — donations held in escrow</Badge>
+            ) : (
+              <Badge tone="warn">Awaiting hospital verification — donations closed</Badge>
             )}
+            {mine && <Badge tone="blue">Your campaign</Badge>}
             {campaign.urgent && !complete && <Badge tone="alert">Urgent</Badge>}
           </div>
 
@@ -209,6 +217,17 @@ export function FundraiserDetail() {
                   This page stays open so donors can see exactly where their money went.
                 </p>
               </div>
+            ) : !donatable ? (
+              <div className="mt-5 rounded-xl bg-warn-50 p-4 ring-1 ring-warn-100">
+                <p className="flex items-center gap-2 font-bold text-warn-700">
+                  <ShieldCheck size={18} aria-hidden="true" /> Donations are closed
+                </p>
+                <p className="mt-1 text-[0.9rem] leading-relaxed text-warn-700">
+                  This campaign cannot receive money until the hospital confirms
+                  the diagnosis and the cost estimate. That check is what protects
+                  both donors and the patient.
+                </p>
+              </div>
             ) : (
               <Button
                 block
@@ -219,6 +238,27 @@ export function FundraiserDetail() {
               >
                 Donate
               </Button>
+            )}
+
+            {/* Stands in for the hospital's verification desk, which is a
+                separate product with its own accounts and audit trail. */}
+            {mine && campaign.status !== 'verified' && (
+              <div className="mt-3 rounded-xl border border-dashed border-mist-300 p-3">
+                <p className="text-[0.82rem] text-ink-400">
+                  Demo control — in production only hospital staff can do this.
+                </p>
+                <Button
+                  size="md"
+                  variant="secondary"
+                  className="mt-2 w-full"
+                  onClick={() => {
+                    markVerified(campaign.id)
+                    announce('Hospital confirmed the estimate. Donations are now open.', 'success')
+                  }}
+                >
+                  Simulate hospital verification
+                </Button>
+              </div>
             )}
 
             <Button
